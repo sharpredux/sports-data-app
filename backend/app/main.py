@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 
-# We will import and include routers here later
+from app.api.v1 import sports
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -21,3 +21,5 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Sports Data API"}
+
+app.include_router(sports.router, prefix=f"{settings.API_V1_STR}", tags=["sports"])
