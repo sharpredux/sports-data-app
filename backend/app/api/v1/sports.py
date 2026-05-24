@@ -16,9 +16,11 @@ def get_sport_enum(sport: str) -> SportType:
 @router.get("/{sport}/dashboard")
 async def get_dashboard(sport: str):
     sport_enum = get_sport_enum(sport)
-    year = datetime.now().year
     
-    schedule = data_service.get_schedule(sport_enum, year)
+    schedule = data_service.get_scoreboard(sport_enum)
+    if not schedule:
+        year = datetime.now().year
+        schedule = data_service.get_schedule(sport_enum, year)
     
     recent_games = []
     if schedule and len(schedule) > 0:
@@ -103,8 +105,40 @@ async def get_standings(sport: str, year: int = Query(default=datetime.now().yea
 @router.get("/{sport}/schedule")
 async def get_schedule(sport: str, year: int = Query(default=datetime.now().year)):
     sport_enum = get_sport_enum(sport)
-    schedule = data_service.get_schedule(sport_enum, year)
-    return {"schedule": schedule}
+    raw_schedule = data_service.get_schedule(sport_enum, year)
+    
+    formatted_schedule = []
+    if raw_schedule:
+        for game in raw_schedule:
+            game_date_str = game.get("date", "")
+            try:
+                parsed_date = datetime.strptime(game_date_str, "%Y-%m-%dT%H:%MZ")
+                formatted_date = parsed_date.strftime("%Y-%m-%d")
+            except:
+                formatted_date = game_date_str[:10] if len(game_date_str) >= 10 else game_date_str
+
+            status = game.get("status_desc") or game.get("status_detail") or game.get("status", "TBD")
+            home_team = "Home"
+            away_team = "Away"
+            
+            if "competitions" in game and isinstance(game["competitions"], list) and len(game["competitions"]) > 0:
+                comp = game["competitions"][0]
+                status = comp.get("status", {}).get("type", {}).get("detail", status)
+                competitors = comp.get("competitors", [])
+                for c in competitors:
+                    if c.get("homeAway") == "home":
+                        home_team = c.get("team", {}).get("displayName", home_team)
+                    else:
+                        away_team = c.get("team", {}).get("displayName", away_team)
+                        
+            formatted_schedule.append({
+                "date": formatted_date,
+                "away": away_team,
+                "home": home_team,
+                "time": status
+            })
+            
+    return formatted_schedule
 
 @router.get("/{sport}/teams")
 async def get_teams(sport: str):

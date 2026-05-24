@@ -41,7 +41,34 @@ class DataService:
             print(f"Error fetching schedule for {sport.value}: {e}")
             return []
 
-    def get_scoreboard(self, sport: SportType) -> Dict[str, Any]:
-        return {}
+    def get_scoreboard(self, sport: SportType) -> List[Dict[str, Any]]:
+        cache_key = f"{sport.value}_scoreboard"
+        cached = cache.get(cache_key, 60)
+        if cached:
+            return cached
+            
+        sport_map = {
+            SportType.NFL: ("football", "nfl"),
+            SportType.NBA: ("basketball", "nba"),
+            SportType.CFB: ("football", "college-football"),
+            SportType.MBB: ("basketball", "mens-college-basketball")
+        }
+        
+        if sport not in sport_map:
+            return []
+            
+        import requests
+        s_group, s_name = sport_map[sport]
+        url = f"https://site.api.espn.com/apis/site/v2/sports/{s_group}/{s_name}/scoreboard?limit=100"
+        
+        try:
+            resp = requests.get(url, timeout=10)
+            data = resp.json()
+            events = data.get("events", [])
+            cache.set(cache_key, events)
+            return events
+        except Exception as e:
+            print(f"Error fetching live scoreboard for {sport.value}: {e}")
+            return []
 
 data_service = DataService()
