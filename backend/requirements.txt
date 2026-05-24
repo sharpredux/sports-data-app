@@ -4,3 +4,4 @@ sportsdataverse
 polars
 numpy
 pydantic
+pydantic-settings
