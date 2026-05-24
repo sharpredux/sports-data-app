@@ -2,7 +2,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-export default function TeamsPage({ params }) {
+import { use } from 'react';
+
+  params = use(params);
   const sport = params.sport.toUpperCase();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

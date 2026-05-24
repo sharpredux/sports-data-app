@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-export default function GameDetailPage({ params }) {
+import { use } from 'react';
+
+  params = use(params);
   const sport = params.sport.toUpperCase();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

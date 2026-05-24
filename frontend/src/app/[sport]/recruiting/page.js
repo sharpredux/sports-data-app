@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-export default function RecruitingPage({ params }) {
+import { use } from 'react';
+
+  params = use(params);
   const sport = params.sport.toUpperCase();
   const [loading, setLoading] = useState(true);
   const [classes, setClasses] = useState([]);

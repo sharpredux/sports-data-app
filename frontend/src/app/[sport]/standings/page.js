@@ -2,7 +2,9 @@
 import { useState, useEffect } from 'react';
 import SeasonSelector from '@/components/ui/SeasonSelector';
 
-export default function StandingsPage({ params }) {
+import { use } from 'react';
+
+  params = use(params);
   const sport = params.sport.toUpperCase();
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);

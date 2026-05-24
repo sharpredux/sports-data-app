@@ -2,7 +2,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { use } from 'react';
 export default function SportLayout({ children, params }) {
+  params = use(params);
   const sport = params.sport.toLowerCase();
   const pathname = usePathname();
 

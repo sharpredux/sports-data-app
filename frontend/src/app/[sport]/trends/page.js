@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import TrendLineChart from '@/components/charts/TrendLineChart';
 import ScoringAreaChart from '@/components/charts/ScoringAreaChart';
 
-export default function TrendsPage({ params }) {
+import { use } from 'react';
+
+  params = use(params);
   const sport = params.sport.toUpperCase();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
