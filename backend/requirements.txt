@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-sportsdataverse
-polars
-numpy
 pydantic
 pydantic-settings
+requests
