@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import SeasonSelector from '@/components/ui/SeasonSelector';
 
 import { use } from 'react';
-
+export default function SchedulePage({ params }) {
   params = use(params);
   const sport = params.sport.toUpperCase();
   const currentYear = new Date().getFullYear();

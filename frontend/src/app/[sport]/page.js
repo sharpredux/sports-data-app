@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 import { use } from 'react';
-
+export default function LeagueHome({ params }) {
   params = use(params);
   const sport = params.sport.toUpperCase();
   const [data, setData] = useState(null);

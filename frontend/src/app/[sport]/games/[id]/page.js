@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 import { use } from 'react';
-
+export default function GameDetailPage({ params }) {
   params = use(params);
   const sport = params.sport.toUpperCase();
   const [data, setData] = useState(null);
