@@ -13,9 +13,11 @@ export default function StandingsPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    // Fetch from backend in real implementation
-    const timer = setTimeout(() => {
-      setData({
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/standings?year=' + year)
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData({
         divisions: [
           {
             name: 'Division 1',
@@ -26,9 +28,26 @@ export default function StandingsPage({ params }) {
           }
         ]
       });
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData({
+        divisions: [
+          {
+            name: 'Division 1',
+            teams: [
+              { name: 'Team A', w: 10, l: 2, pct: 0.833, strk: 'W5' },
+              { name: 'Team B', w: 8, l: 4, pct: 0.667, strk: 'L1' },
+            ]
+          }
+        ]
+      });
+        setLoading(false);
+      });
   }, [params.sport, year]);
 
   return (

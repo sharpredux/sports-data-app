@@ -10,8 +10,11 @@ export default function PredictionsPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setPredictions([
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/predictions')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail || (Array.isArray(apiData) && apiData.length === 0) || (apiData.predictions && apiData.predictions.length === 0)) {
+          setPredictions([
         {
           id: 1,
           date: 'Tonight, 8:00 PM',
@@ -29,9 +32,33 @@ export default function PredictionsPage({ params }) {
           }
         }
       ]);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setPredictions(apiData.data || apiData.predictions || apiData.rankings || apiData.recruiting || apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setPredictions([
+        {
+          id: 1,
+          date: 'Tonight, 8:00 PM',
+          home: { name: 'Team A', record: '22-5' },
+          away: { name: 'Team B', record: '18-9' },
+          prediction: {
+            winner: 'home',
+            confidence: 68,
+            projectedScore: '115 - 108',
+            insights: [
+              '🔥 Team A is on a 7-game win streak',
+              '📊 Team A ranks #2 in defensive efficiency',
+              sport === 'NBA' ? '🏀 Matchup advantage: Team A backcourt' : '🏈 EPA Advantage: Team A Offense'
+            ]
+          }
+        }
+      ]);
+        setLoading(false);
+      });
   }, [params.sport]);
 
   return (

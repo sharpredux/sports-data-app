@@ -13,14 +13,27 @@ export default function SchedulePage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData([
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/schedule?year=' + year)
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData([
         { date: '2025-10-15', away: 'Team C', home: 'Team D', time: '7:00 PM EST' },
         { date: '2025-10-16', away: 'Team A', home: 'Team B', time: '8:30 PM EST' },
       ]);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData([
+        { date: '2025-10-15', away: 'Team C', home: 'Team D', time: '7:00 PM EST' },
+        { date: '2025-10-16', away: 'Team A', home: 'Team B', time: '8:30 PM EST' },
+      ]);
+        setLoading(false);
+      });
   }, [params.sport, year]);
 
   return (

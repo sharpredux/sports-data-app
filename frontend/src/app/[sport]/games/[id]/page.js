@@ -10,8 +10,11 @@ export default function GameDetailPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData({
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/dashboard')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData({
         date: '2025-10-15',
         status: 'Final',
         home: { name: 'Team A', score: 24, quarters: [7, 10, 0, 7] },
@@ -25,9 +28,29 @@ export default function GameDetailPage({ params }) {
           { time: '1Q 08:30', text: 'Team A Touchdown' },
         ]
       });
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData({
+        date: '2025-10-15',
+        status: 'Final',
+        home: { name: 'Team A', score: 24, quarters: [7, 10, 0, 7] },
+        away: { name: 'Team B', score: 10, quarters: [0, 3, 7, 0] },
+        boxScore: [
+          { player: 'Player 1', pts: 12, ast: 4, reb: 3 },
+          { player: 'Player 2', pts: 8, ast: 1, reb: 10 },
+        ],
+        pbp: [
+          { time: '1Q 12:00', text: 'Game started' },
+          { time: '1Q 08:30', text: 'Team A Touchdown' },
+        ]
+      });
+        setLoading(false);
+      });
   }, [params.sport, params.id]);
 
   if (loading) return <div className="skeleton glass-card" style={{ height: '600px' }}></div>;

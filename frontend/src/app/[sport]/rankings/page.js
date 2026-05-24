@@ -10,16 +10,31 @@ export default function RankingsPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setRankings([
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/rankings')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail || (Array.isArray(apiData) && apiData.length === 0) || (apiData.predictions && apiData.predictions.length === 0)) {
+          setRankings([
         { rank: 1, prev: 1, name: 'Team A', points: 1500, firstPlaceVotes: 60 },
         { rank: 2, prev: 3, name: 'Team B', points: 1420, firstPlaceVotes: 2 },
         { rank: 3, prev: 2, name: 'Team C', points: 1380, firstPlaceVotes: 0 },
         { rank: 4, prev: 6, name: 'Team D', points: 1200, firstPlaceVotes: 0 },
       ]);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setRankings(apiData.data || apiData.predictions || apiData.rankings || apiData.recruiting || apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setRankings([
+        { rank: 1, prev: 1, name: 'Team A', points: 1500, firstPlaceVotes: 60 },
+        { rank: 2, prev: 3, name: 'Team B', points: 1420, firstPlaceVotes: 2 },
+        { rank: 3, prev: 2, name: 'Team C', points: 1380, firstPlaceVotes: 0 },
+        { rank: 4, prev: 6, name: 'Team D', points: 1200, firstPlaceVotes: 0 },
+      ]);
+        setLoading(false);
+      });
   }, [params.sport]);
 
   return (

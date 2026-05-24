@@ -12,8 +12,11 @@ export default function TrendsPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData({
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/trends')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData({
         hottest: [
           { name: 'Team A', momentum: 8.5, streak: 'W7' },
           { name: 'Team B', momentum: 7.2, streak: 'W5' },
@@ -32,9 +35,34 @@ export default function TrendsPage({ params }) {
           allowed: [14, 10, 17, 20, 14]
         }
       });
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData({
+        hottest: [
+          { name: 'Team A', momentum: 8.5, streak: 'W7' },
+          { name: 'Team B', momentum: 7.2, streak: 'W5' },
+        ],
+        risers: [
+          { name: 'Team C', change: '+15.2' },
+          { name: 'Team D', change: '+12.4' },
+        ],
+        formChartData: {
+          labels: ['G1', 'G2', 'G3', 'G4', 'G5'],
+          values: [55, 60, 68, 85, 92]
+        },
+        efficiencyData: {
+          labels: ['G1', 'G2', 'G3', 'G4', 'G5'],
+          scored: [24, 28, 35, 42, 38],
+          allowed: [14, 10, 17, 20, 14]
+        }
+      });
+        setLoading(false);
+      });
   }, [params.sport]);
 
   if (loading) return <div className="skeleton glass-card" style={{ height: '600px' }}></div>;

@@ -10,9 +10,12 @@ export default function LeagueHome({ params }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real implementation we would fetch from `/api/v1/${params.sport}/dashboard`
-    const timer = setTimeout(() => {
-      setData({
+    setLoading(true);
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/dashboard')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData({
         recentGames: [
           { id: 1, home: 'Team A', away: 'Team B', homeScore: 104, awayScore: 98, status: 'Final' },
           { id: 2, home: 'Team C', away: 'Team D', homeScore: 112, awayScore: 120, status: 'Final' },
@@ -22,9 +25,25 @@ export default function LeagueHome({ params }) {
           { name: 'Team A', record: '11-4' },
         ]
       });
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData({
+        recentGames: [
+          { id: 1, home: 'Team A', away: 'Team B', homeScore: 104, awayScore: 98, status: 'Final' },
+          { id: 2, home: 'Team C', away: 'Team D', homeScore: 112, awayScore: 120, status: 'Final' },
+        ],
+        topTeams: [
+          { name: 'Team C', record: '12-3' },
+          { name: 'Team A', record: '11-4' },
+        ]
+      });
+        setLoading(false);
+      });
   }, [params.sport]);
 
   return (

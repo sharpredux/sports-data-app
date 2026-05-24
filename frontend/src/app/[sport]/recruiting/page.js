@@ -10,15 +10,29 @@ export default function RecruitingPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setClasses([
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/recruiting')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail || (Array.isArray(apiData) && apiData.length === 0) || (apiData.predictions && apiData.predictions.length === 0)) {
+          setClasses([
         { rank: 1, name: 'Team A', rating: 315.4, fiveStars: 4, fourStars: 15, commits: 24 },
         { rank: 2, name: 'Team B', rating: 302.1, fiveStars: 3, fourStars: 16, commits: 22 },
         { rank: 3, name: 'Team C', rating: 288.5, fiveStars: 1, fourStars: 18, commits: 25 },
       ]);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setClasses(apiData.data || apiData.predictions || apiData.rankings || apiData.recruiting || apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setClasses([
+        { rank: 1, name: 'Team A', rating: 315.4, fiveStars: 4, fourStars: 15, commits: 24 },
+        { rank: 2, name: 'Team B', rating: 302.1, fiveStars: 3, fourStars: 16, commits: 22 },
+        { rank: 3, name: 'Team C', rating: 288.5, fiveStars: 1, fourStars: 18, commits: 25 },
+      ]);
+        setLoading(false);
+      });
   }, [params.sport]);
 
   return (

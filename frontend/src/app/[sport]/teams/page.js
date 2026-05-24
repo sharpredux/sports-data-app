@@ -12,15 +12,29 @@ export default function TeamsPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData([
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/teams')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData([
         { id: '1', name: 'Team A', location: 'City A', abbreviation: 'TA', color: '#ff0000' },
         { id: '2', name: 'Team B', location: 'City B', abbreviation: 'TB', color: '#00ff00' },
         { id: '3', name: 'Team C', location: 'City C', abbreviation: 'TC', color: '#0000ff' },
       ]);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData([
+        { id: '1', name: 'Team A', location: 'City A', abbreviation: 'TA', color: '#ff0000' },
+        { id: '2', name: 'Team B', location: 'City B', abbreviation: 'TB', color: '#00ff00' },
+        { id: '3', name: 'Team C', location: 'City C', abbreviation: 'TC', color: '#0000ff' },
+      ]);
+        setLoading(false);
+      });
   }, [params.sport]);
 
   const filteredTeams = data?.filter(team => team.name.toLowerCase().includes(search.toLowerCase())) || [];

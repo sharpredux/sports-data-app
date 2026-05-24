@@ -13,8 +13,11 @@ export default function TeamDetailPage({ params }) {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData({
+    fetch('/api/v1/' + params.sport.toLowerCase() + '/teams')
+      .then(res => res.json())
+      .then(apiData => {
+        if (!apiData || Object.keys(apiData).length === 0 || apiData.detail) {
+          setData({
         name: 'Team A',
         record: '10-2',
         conference: 'Conference X',
@@ -31,9 +34,32 @@ export default function TeamDetailPage({ params }) {
           { date: '2025-10-15', opponent: 'Team B', result: 'W 24-10' }
         ]
       });
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+        } else {
+          setData(apiData);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setData({
+        name: 'Team A',
+        record: '10-2',
+        conference: 'Conference X',
+        stats: {
+          pointsPerGame: 28.5,
+          pointsAllowed: 18.2,
+          yardsPerGame: 350.0,
+        },
+        roster: [
+          { name: 'Player 1', pos: 'QB', number: '12' },
+          { name: 'Player 2', pos: 'WR', number: '10' },
+        ],
+        recentGames: [
+          { date: '2025-10-15', opponent: 'Team B', result: 'W 24-10' }
+        ]
+      });
+        setLoading(false);
+      });
   }, [params.sport, params.id, year]);
 
   if (loading) return <div className="skeleton glass-card" style={{ height: '600px' }}></div>;
