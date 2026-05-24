@@ -29,7 +29,7 @@ class DataService:
         import requests
         s_group, s_name = sport_map[sport]
         # ESPN API URL for scoreboard/schedule
-        url = f"https://site.api.espn.com/apis/site/v2/sports/{s_group}/{s_name}/scoreboard?dates={year}&limit=500"
+        url = f"https://site.api.espn.com/apis/site/v2/sports/{s_group}/{s_name}/scoreboard?dates={year}&limit=2000"
         
         try:
             resp = requests.get(url, timeout=10)
@@ -58,8 +58,12 @@ class DataService:
             return []
             
         import requests
+        from datetime import datetime, timedelta
         s_group, s_name = sport_map[sport]
-        url = f"https://site.api.espn.com/apis/site/v2/sports/{s_group}/{s_name}/scoreboard?limit=100"
+        
+        start_date = (datetime.now() - timedelta(days=14)).strftime("%Y%m%d")
+        end_date = (datetime.now() + timedelta(days=7)).strftime("%Y%m%d")
+        url = f"https://site.api.espn.com/apis/site/v2/sports/{s_group}/{s_name}/scoreboard?dates={start_date}-{end_date}&limit=100"
         
         try:
             resp = requests.get(url, timeout=10)
