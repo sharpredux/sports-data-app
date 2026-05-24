@@ -1,0 +1,85 @@
+:root {
+  --background: #111111;
+  --surface: #1e1e1e;
+  --surface-hover: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.5);
+  
+  --border: #333333;
+  --radius: 12px;
+  
+  /* League Colors */
+  --nfl-primary: #013369;
+  --nfl-secondary: #D50A0A;
+  --nba-primary: #1D428A;
+  --nba-secondary: #C8102E;
+  --cfb-primary: #1B365D;
+  --cfb-secondary: #FFB81C;
+  --mlb-primary: #002D72;
+  --mlb-secondary: #D50032;
+  --mbb-primary: #FF6B00;
+  --mbb-secondary: #1B3C6D;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  background: var(--surface-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', -apple-system, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  background: #2a2a2a;
+  background-image: linear-gradient(90deg, #2a2a2a 0px, #3a3a3a 40px, #2a2a2a 80px);
+  background-size: 1000px;
+  animation: shimmer 2s infinite linear;
+  border-radius: 4px;
+}
