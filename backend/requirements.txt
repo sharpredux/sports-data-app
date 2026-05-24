@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+sportsdataverse
+polars
+numpy
+pydantic
